@@ -671,11 +671,12 @@ export const make = Effect.gen(function* () {
           args: [
             "search",
             "repos",
-            query,
             "--limit",
             String(limit),
             "--json",
             "fullName,description",
+            "--",
+            query,
           ],
         }).pipe(
           Effect.flatMap((result) =>

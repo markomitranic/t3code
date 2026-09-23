@@ -524,7 +524,7 @@ describe("GitHubCli.layer", () => {
           processOutput(
             // @effect-diagnostics-next-line preferSchemaOverJson:off
             JSON.stringify(
-              input.args[2] === "sleepy user:@me"
+              input.args.at(-1) === "sleepy user:@me"
                 ? [repository("octocat/sleepytime")]
                 : [repository("sleepy-project/sleepy"), repository("octocat/sleepytime")],
             ),
