@@ -1036,12 +1036,14 @@ function OpenCommandPaletteDialog(props: {
   );
   const isRemoteProjectCloneFlow = addProjectCloneFlow !== null;
   const isRemoteProjectRepositoryStep = addProjectCloneFlow?.step === "repository";
+  const isGitHubRepositoryStep =
+    isRemoteProjectRepositoryStep && addProjectCloneFlow.source === "github";
   const githubRepositorySearchQuery = useDebouncedValue(
-    isRemoteProjectRepositoryStep && addProjectCloneFlow.source === "github" ? query.trim() : "",
+    isGitHubRepositoryStep ? query.trim() : "",
     500,
   );
   const githubRepositorySearch = useEnvironmentQuery(
-    isRemoteProjectRepositoryStep && githubRepositorySearchQuery.length >= 3
+    isGitHubRepositoryStep && githubRepositorySearchQuery.length >= 3
       ? sourceControlEnvironment.searchRepositories({
           environmentId: addProjectCloneFlow.environmentId,
           input: { provider: "github", query: githubRepositorySearchQuery },
