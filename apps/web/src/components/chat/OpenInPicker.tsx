@@ -192,11 +192,13 @@ function getOpenInIconClass(kind: OpenInOption["kind"]) {
   return cn(kind === "brand" ? "text-foreground opacity-100" : "text-muted-foreground");
 }
 
+/** Opens a workspace in a local or remote editor and optionally focuses a file. */
 export const OpenInPicker = memo(function OpenInPicker({
   environmentId,
   keybindings,
   availableEditors,
   openInCwd,
+  filePath,
   presentation = "toolbar",
   compact = false,
   enableShortcut = true,
@@ -205,6 +207,7 @@ export const OpenInPicker = memo(function OpenInPicker({
   keybindings: ResolvedKeybindingsConfig;
   availableEditors: ReadonlyArray<EditorId>;
   openInCwd: string | null;
+  filePath?: string;
   presentation?: "toolbar" | "menu";
   compact?: boolean;
   enableShortcut?: boolean;
@@ -239,8 +242,17 @@ export const OpenInPicker = memo(function OpenInPicker({
         if (url === undefined) return;
         // Only record hint-seen/preferred when the shell actually accepted
         // the URL (an older desktop build can refuse the editor scheme).
-        void openRemoteEditorUrl(url).then((opened) => {
+        void openRemoteEditorUrl(url).then(async (opened) => {
           if (!opened) return;
+          if (filePath && editor !== "file-manager") {
+            const fileUrl = buildRemoteOpenUrl({
+              editor,
+              host: remote.host.host,
+              absolutePath: filePath,
+              file: true,
+            });
+            if (fileUrl === undefined || !(await openRemoteEditorUrl(fileUrl))) return;
+          }
           markRemoteHintSeen();
           setPreferredEditor(editor);
         });
@@ -251,6 +263,7 @@ export const OpenInPicker = memo(function OpenInPicker({
         input: {
           cwd: openInCwd,
           editor,
+          ...(filePath && editor !== "file-manager" ? { filePath } : {}),
         },
       });
       setPreferredEditor(editor);
@@ -258,6 +271,7 @@ export const OpenInPicker = memo(function OpenInPicker({
     },
     [
       environmentId,
+      filePath,
       markRemoteHintSeen,
       openInCwd,
       openInEditorMutation,

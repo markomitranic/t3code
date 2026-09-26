@@ -1114,7 +1114,8 @@ export default function FilePreviewPanel({
               environmentId={environmentId}
               keybindings={keybindings}
               availableEditors={availableEditors}
-              openInCwd={absolutePath}
+              openInCwd={cwd}
+              {...(absolutePath && !isDirectory ? { filePath: absolutePath } : {})}
               compact
               enableShortcut={false}
             />
