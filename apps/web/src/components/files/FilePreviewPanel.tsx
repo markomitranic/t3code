@@ -1111,6 +1111,7 @@ export default function FilePreviewPanel({
           {absolutePath &&
           (environmentId === primaryEnvironmentId || remoteOpenState.mode !== "local-exec") ? (
             <OpenInPicker
+              key={`${environmentId}:${cwd}:${absolutePath}`}
               environmentId={environmentId}
               keybindings={keybindings}
               availableEditors={availableEditors}
